@@ -59,9 +59,11 @@ public abstract class AbstractEventWriter<T extends EventInfo> implements EventW
     }
 
     protected void endFile() throws IOException {
-        jsonGenerator.flush();
-        jsonGenerator.close();
-        jsonGenerator = null;
+        if(jsonGenerator!=null){
+            jsonGenerator.flush();
+            jsonGenerator.close();
+            jsonGenerator = null;
+        }
     }
 
     protected JsonGenerator createJsonGenerator(OutputStream out) throws IOException {
