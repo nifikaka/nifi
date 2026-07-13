@@ -95,6 +95,22 @@ public abstract class AbstractBinlogEventWriter<T extends BinlogEventInfo> exten
 
     public void finishAndTransferFlowFile(final ProcessSession session, final EventWriterConfiguration eventWriterConfiguration, final String transitUri, final long seqId,
                                           final BinlogEventInfo eventInfo, final Relationship relationship) {
+        if (eventWriterConfiguration.getNumberOfEventsWritten() <= 0) {
+        FlowFile flowFile = eventWriterConfiguration.getCurrentFlowFile();
+        if (flowFile != null && session != null) {
+            try {
+                OutputStream outputStream = eventWriterConfiguration.getFlowFileOutputStream();
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException ignored) {
+            }
+            session.remove(flowFile);
+        }
+        eventWriterConfiguration.cleanUp();
+        return;
+    }
+        
         if (writtenMultipleEvents(eventWriterConfiguration)) {
             try {
                 jsonGenerator.writeEndArray();
