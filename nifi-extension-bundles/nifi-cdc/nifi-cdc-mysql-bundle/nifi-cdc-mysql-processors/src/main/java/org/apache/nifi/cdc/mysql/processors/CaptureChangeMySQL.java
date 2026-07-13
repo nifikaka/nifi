@@ -1241,8 +1241,8 @@ public class CaptureChangeMySQL extends AbstractSessionFactoryProcessor {
     }
 
     protected String getTableInfoQuery(final Statement statement, final TableInfoCacheKey tableInfoCacheKey) throws SQLException {
-        final String databaseNameQuoted = statement.enquoteIdentifier(tableInfoCacheKey.getDatabaseName(), true);
-        final String tableNameQuoted = statement.enquoteIdentifier(tableInfoCacheKey.getTableName(), true);
+        final String databaseNameQuoted = statement.enquoteIdentifier(tableInfoCacheKey.getDatabaseName(), false);//mysql默认不支持双引号限定库名及表名称对象,cdc语法会报错
+        final String tableNameQuoted = statement.enquoteIdentifier(tableInfoCacheKey.getTableName(), false);//mysql默认不支持双引号限定库名及表名称对象,cdc语法会报错
         return "SELECT * FROM %s.%s LIMIT 0".formatted(databaseNameQuoted, tableNameQuoted);
     }
 
